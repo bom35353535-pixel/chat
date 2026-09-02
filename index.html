@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nexus AI Studio - OpenRouter AI Chatbot</title>
+  <title>서울시 교육 공공서비스예약 AI 챗봇</title>
   
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,12 +13,11 @@
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
-  <!-- Highlight.js CSS for Code Highlighting -->
+  <!-- Highlight.js CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
 
-  <!-- Marked.js for Markdown Parsing -->
+  <!-- Marked.js & Highlight.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.1/marked.min.js"></script>
-  <!-- Highlight.js script -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
   <link rel="stylesheet" href="styles.css">
@@ -31,9 +30,9 @@
       <div class="sidebar-header">
         <div class="logo">
           <div class="logo-icon">
-            <i class="fa-solid fa-brain"></i>
+            <i class="fa-solid fa-landmark"></i>
           </div>
-          <span class="logo-text">Nexus AI</span>
+          <span class="logo-text">서울 교육예약 AI</span>
         </div>
         <button class="icon-btn close-sidebar-btn" id="closeSidebarBtn" title="사이드바 닫기">
           <i class="fa-solid fa-xmark"></i>
@@ -48,14 +47,14 @@
       <div class="history-section">
         <div class="history-title">대화 기록</div>
         <div class="history-list" id="historyList">
-          <!-- Chat history items will be injected here -->
+          <!-- Chat history items -->
         </div>
       </div>
 
       <div class="sidebar-footer">
         <button class="sidebar-action-btn" id="openSettingsBtn">
           <i class="fa-solid fa-sliders"></i>
-          <span>설정 & API 키</span>
+          <span>AI 상세 설정</span>
         </button>
         <button class="sidebar-action-btn danger" id="clearAllHistoryBtn">
           <i class="fa-solid fa-trash-can"></i>
@@ -80,13 +79,17 @@
               <option value="deepseek/deepseek-chat">DeepSeek Chat (V3)</option>
               <option value="openai/gpt-4o-mini">OpenAI GPT-4o Mini</option>
               <option value="anthropic/claude-3.5-sonnet">Anthropic Claude 3.5 Sonnet</option>
-              <option value="meta-llama/llama-3.3-70b-instruct">Meta Llama 3.3 70B</option>
               <option value="custom">직접 모델 ID 입력...</option>
             </select>
           </div>
         </div>
 
         <div class="header-right">
+          <div class="data-badge" id="dataBadge">
+            <i class="fa-solid fa-database"></i>
+            <span id="dataBadgeText">서울시 공공데이터 연동 중...</span>
+          </div>
+
           <div class="status-badge" id="statusBadge">
             <span class="status-dot"></span>
             <span class="status-text" id="statusText">준비됨</span>
@@ -102,7 +105,7 @@
         </div>
       </header>
 
-      <!-- Custom Model Input Bar (Hidden by default) -->
+      <!-- Custom Model Input Bar -->
       <div class="custom-model-bar hidden" id="customModelBar">
         <i class="fa-solid fa-code"></i>
         <input type="text" id="customModelInput" placeholder="예: qwen/qwen-2.5-coder-32b-instruct" />
@@ -111,44 +114,52 @@
 
       <!-- Messages Display Area -->
       <div class="chat-messages" id="chatMessages">
-        <!-- Empty State Starter View -->
+        <!-- Welcome Screen -->
         <div class="welcome-screen" id="welcomeScreen">
           <div class="welcome-badge">
-            <i class="fa-solid fa-bolt"></i> Powered by OpenRouter AI
+            <i class="fa-solid fa-shield-halved"></i> 서울시 열린데이터 광장 (ListPublicReservationEducation) 연동
           </div>
-          <h1 class="welcome-title">무엇을 도와드릴까요?</h1>
-          <p class="welcome-subtitle">원하는 AI 모델을 선택하고 자유롭게 대화를 나누어보세요.</p>
+          <h1 class="welcome-title">서울시 교육 공공서비스 예약 AI</h1>
+          <p class="welcome-subtitle">서울시 역사 박물관, 청소년 인턴제, 가족 체험 등 다양한 교육 강좌 정보를 자연어로 물어보세요.</p>
+
+          <!-- Real-time Education Card Preview List -->
+          <div class="edu-preview-section">
+            <div class="edu-preview-title"><i class="fa-solid fa-list-check"></i> 실시간 조회 가능한 주요 교육 예약 서비스</div>
+            <div class="edu-cards-preview" id="eduCardsPreview">
+              <!-- Injected by JavaScript -->
+            </div>
+          </div>
 
           <div class="starter-cards">
-            <div class="card starter-card" data-prompt="HTML, CSS, JS로 예쁜 디지털 시계 코드를 작성해줘.">
-              <div class="card-icon"><i class="fa-solid fa-code"></i></div>
+            <div class="card starter-card" data-prompt="서울역사박물관에서 신청 가능한 어린이/초등학생 대상 체험 교육 강좌를 추천해줘.">
+              <div class="card-icon"><i class="fa-solid fa-child"></i></div>
               <div class="card-text">
-                <strong>웹 프론트엔드 코드</strong>
-                <span>예쁜 디지털 시계 예제 작성하기</span>
+                <strong>어린이/초등학생 교육</strong>
+                <span>서울역사박물관 박물관 체험 추천받기</span>
               </div>
             </div>
 
-            <div class="card starter-card" data-prompt="초보자를 위한 오픈라우터 API 사용법과 개념을 3줄로 쉬운 비유와 함께 설명해줘.">
-              <div class="card-icon"><i class="fa-solid fa-lightbulb"></i></div>
+            <div class="card starter-card" data-prompt="중학생 인턴제 수강생 모집 조건과 접수 기간, 네이버 밴드 가입 유의사항을 정리해줘.">
+              <div class="card-icon"><i class="fa-solid fa-graduation-cap"></i></div>
               <div class="card-text">
-                <strong>개념 쉽게 설명</strong>
-                <span>오픈라우터 API의 역할 알기</span>
+                <strong>청소년 인턴제 모집 정보</strong>
+                <span>중학생 인턴제 수강 신청 안내 받기</span>
               </div>
             </div>
 
-            <div class="card starter-card" data-prompt="생산성을 높이기 위한 오늘 하루 계획표 가이드를 짜줘.">
-              <div class="card-icon"><i class="fa-solid fa-calendar-check"></i></div>
+            <div class="card starter-card" data-prompt="성인을 위한 역사 강좌나 박물관 대학 심화반 신청 자격과 일정 알려줘.">
+              <div class="card-icon"><i class="fa-solid fa-book-open"></i></div>
               <div class="card-text">
-                <strong>생산성 가이드</strong>
-                <span>하루 일정 계획 짜기</span>
+                <strong>성인/시니어 역사 강좌</strong>
+                <span>박물관 대학 및 명곡 역사강좌 찾기</span>
               </div>
             </div>
 
-            <div class="card starter-card" data-prompt="오류 없이 백엔드 서버 없이 프론트엔드에서 AI를 호출할 때 보안 주의점 3가지를 정리해줘.">
-              <div class="card-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <div class="card starter-card" data-prompt="현재 마감되었거나 예약 진행 중인 교육 강좌 전체 목록과 예약 링크를 요약해줘.">
+              <div class="card-icon"><i class="fa-solid fa-link"></i></div>
               <div class="card-text">
-                <strong>개발 팁 & 보안</strong>
-                <span>프론트엔드 API 호출 유의사항</span>
+                <strong>예약 바로가기 링크</strong>
+                <span>전체 강좌 상태 및 바로가기 URL 받기</span>
               </div>
             </div>
           </div>
@@ -160,15 +171,15 @@
         <div class="input-box-wrapper">
           <textarea 
             id="userInput" 
-            placeholder="메시지를 입력하세요... (Shift + Enter 줄바꿈)" 
+            placeholder="서울시 교육 공공서비스 예약에 대해 질문하세요... (예: '종로구에서 무료로 들을 수 있는 역사 강좌 알려줘')" 
             rows="1"
           ></textarea>
           
           <div class="input-controls">
             <div class="input-tools-left">
-              <button class="web-search-toggle-btn active" id="webSearchToggleBtn" title="웹 검색 (할루시네이션 방지 & 최신 정보 검색)">
-                <i class="fa-solid fa-globe"></i> <span>웹 검색 켜짐</span>
-              </button>
+              <div class="embedded-key-badge">
+                <i class="fa-solid fa-key"></i> OpenRouter API 키 내장 완료
+              </div>
               <div class="token-counter" id="tokenCounter">
                 <i class="fa-solid fa-font"></i> <span id="charCount">0</span>자
               </div>
@@ -185,7 +196,7 @@
           </div>
         </div>
         <div class="input-footer">
-          OpenRouter를 통해 200개 이상의 다양한 AI 모델에 연결됩니다. API 키는 로컬에 보관됩니다.
+          서울시 열린데이터광장 OpenAPI 연동 완료 · OpenRouter AI 기반 자연어 검색
         </div>
       </div>
     </main>
@@ -194,27 +205,20 @@
     <div class="modal-overlay hidden" id="settingsModal">
       <div class="modal-card">
         <div class="modal-header">
-          <h2><i class="fa-solid fa-sliders"></i> AI 설정 & API 키</h2>
+          <h2><i class="fa-solid fa-sliders"></i> AI 설정</h2>
           <button class="icon-btn close-modal-btn" id="closeSettingsModalBtn">
             <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
 
         <div class="modal-body">
-          <!-- API Key Setting -->
           <div class="setting-group">
-            <label for="apiKeyInput" class="setting-label">
-              <span>OpenRouter API Key</span>
-              <span class="badge info">코드 내 `app.js` 기본값 사용 가능</span>
+            <label class="setting-label">
+              <span>API 키 상태</span>
+              <span class="badge info">코드 내 내장됨 (수정 불필요)</span>
             </label>
-            <div class="api-key-input-wrapper">
-              <input type="password" id="apiKeyInput" placeholder="sk-or-v1-..." />
-              <button class="toggle-password-btn" id="toggleApiKeyVisibility" title="보이기/숨기기">
-                <i class="fa-solid fa-eye"></i>
-              </button>
-            </div>
             <p class="setting-help">
-              코드 내 <code>OPENROUTER_API_KEY</code> 변수에 설정해두면 매번 입력할 필요가 없습니다. <a href="https://openrouter.ai/keys" target="_blank" rel="noopener">오픈라우터 키 발급 받기 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+              <i class="fa-solid fa-circle-check" style="color: var(--success);"></i> 오픈라우터 API 키가 코드(<code>app.js</code>)에 안전하게 내장되어 사용자가 별도로 입력하지 않아도 바로 작동합니다.
             </p>
           </div>
 
@@ -224,10 +228,9 @@
               <span>시스템 프롬프트 (System Prompt)</span>
             </label>
             <div class="preset-btns">
-              <button class="preset-btn" data-preset="default">기본 도우미</button>
-              <button class="preset-btn" data-preset="coder">수석 시니어 개발자</button>
-              <button class="preset-btn" data-preset="concise">핵심만 간결하게</button>
-              <button class="preset-btn" data-preset="friendly">친절한 선생님</button>
+              <button class="preset-btn" data-preset="default">기본 전문 안내원</button>
+              <button class="preset-btn" data-preset="summary">요약 리스트형</button>
+              <button class="preset-btn" data-preset="friendly">친절한 설명 어조</button>
             </div>
             <textarea id="systemPromptInput" rows="3" placeholder="AI에게 부여할 역할이나 지침을 작성하세요..."></textarea>
           </div>
@@ -236,9 +239,9 @@
           <div class="setting-row">
             <div class="setting-group half">
               <label class="setting-label">
-                <span>창의성 (Temperature): <strong id="tempVal">0.7</strong></span>
+                <span>창의성 (Temperature): <strong id="tempVal">0.5</strong></span>
               </label>
-              <input type="range" id="tempSlider" min="0" max="2" step="0.1" value="0.7">
+              <input type="range" id="tempSlider" min="0" max="2" step="0.1" value="0.5">
             </div>
 
             <div class="setting-group half">
@@ -256,15 +259,6 @@
               <span class="slider round"></span>
             </label>
             <span>실시간 스트리밍(Streaming) 활성화</span>
-          </div>
-
-          <!-- Enable Web Search Toggle -->
-          <div class="setting-group checkbox-group">
-            <label class="switch">
-              <input type="checkbox" id="webSearchModalToggle" checked>
-              <span class="slider round"></span>
-            </label>
-            <span>실시간 웹 검색 활성화 (할루시네이션 방지 & 최신 정보 검색)</span>
           </div>
         </div>
 
