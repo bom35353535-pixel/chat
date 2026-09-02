@@ -527,18 +527,23 @@ async function sendMessage() {
            (item.PLACENM && queryLower.includes(item.PLACENM.toLowerCase()));
   });
 
-  if (relevantData.length === 0) {
-    relevantData = seoulReservationData.slice(0, 25);
-  } else if (relevantData.length > 35) {
-    relevantData = relevantData.slice(0, 35);
-  }
+  let RAG_SYSTEM_PROMPT = "";
 
-  // Prepare RAG Context Prompt with filtered Seoul Education Dataset
-  const contextString = JSON.stringify(relevantData, null, 2);
-  const RAG_SYSTEM_PROMPT = `${state.settings.systemPrompt}
+  if (relevantData.length > 0) {
+    if (relevantData.length > 35) relevantData = relevantData.slice(0, 35);
+    const contextString = JSON.stringify(relevantData, null, 2);
+    RAG_SYSTEM_PROMPT = `${state.settings.systemPrompt}
 
-[실시간 서울시 교육 공공서비스예약 검색 결과 (전체 ${seoulReservationData.length}건 중 관련 ${relevantData.length}건)]
+[실시간 서울시 교육 공공서비스예약 API 검색 결과 (관련 ${relevantData.length}건)]
 ${contextString}`;
+  } else {
+    // If no direct match in local API data, instruct AI to use web_search tool to find live info!
+    RAG_SYSTEM_PROMPT = `${state.settings.systemPrompt}
+
+[중요 지침: 현재 355건 기본 API 목록에 사용자 질문 키워드가 직접 포함되지 않았습니다.]
+질문하신 내용에 대해 절대로 "정보가 없습니다"나 "죄송합니다"라고 단정 지어 거절하지 마세요!
+반드시 탑재된 웹 검색 도구(openrouter:web_search)를 사용하여 서울시 공공서비스예약(yeyak.seoul.go.kr) 및 관련 도서관/기관 웹사이트에서 최신 예약 프로그램 정보를 검색하여 안내하세요.`;
+  }
 
   const messagesPayload = [
     { role: 'system', content: RAG_SYSTEM_PROMPT },
