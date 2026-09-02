@@ -219,27 +219,38 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 // Official Seoul Open Data API Key & Endpoint
 const SEOUL_API_KEY = "707577445a626f6d3430554551597a";
-const SEOUL_API_URL = `http://openAPI.seoul.go.kr:8088/${SEOUL_API_KEY}/json/ListPublicReservationEducation/1/1000/`;
+const SEOUL_API_RAW_URL = `http://openAPI.seoul.go.kr:8088/${SEOUL_API_KEY}/json/ListPublicReservationEducation/1/1000/`;
+
+// Endpoints list (Direct HTTP -> HTTPS AllOrigins Proxy -> HTTPS CorsProxy)
+const SEOUL_API_ENDPOINTS = [
+  SEOUL_API_RAW_URL,
+  `https://api.allorigins.win/raw?url=${encodeURIComponent(SEOUL_API_RAW_URL)}`,
+  `https://corsproxy.io/?${encodeURIComponent(SEOUL_API_RAW_URL)}`
+];
 
 /* Fetch Seoul Education Public Reservation API (355+ Real-time items) */
 async function fetchSeoulEducationData() {
-  try {
-    const response = await fetch(SEOUL_API_URL);
-    if (response.ok) {
-      const data = await response.json();
-      if (data.ListPublicReservationEducation && data.ListPublicReservationEducation.row) {
-        seoulReservationData = data.ListPublicReservationEducation.row;
-        isDataLoaded = true;
-        updateDataBadge(`서울시 실시간 데이터 355건 전체 연동 완료`);
-        renderDataCardsPreview();
-        return;
+  for (const endpoint of SEOUL_API_ENDPOINTS) {
+    try {
+      const response = await fetch(endpoint);
+      if (response.ok) {
+        let textData = await response.text();
+        // Parse JSON if returned as string
+        const data = typeof textData === 'string' ? JSON.parse(textData) : textData;
+        if (data.ListPublicReservationEducation && data.ListPublicReservationEducation.row) {
+          seoulReservationData = data.ListPublicReservationEducation.row;
+          isDataLoaded = true;
+          updateDataBadge(`서울시 실시간 데이터 ${seoulReservationData.length}건 전체 연동 완료`);
+          renderDataCardsPreview();
+          return;
+        }
       }
+    } catch (e) {
+      console.warn(`Failed fetching Seoul API from ${endpoint}:`, e);
     }
-  } catch (e) {
-    console.warn("Seoul API fetch failed, using built-in cache:", e);
   }
 
-  // Fallback
+  // Fallback to built-in cache
   seoulReservationData = DEFAULT_SEOUL_DATA;
   isDataLoaded = true;
   updateDataBadge(`서울시 공공데이터 탑재됨 (${seoulReservationData.length}건)`);
