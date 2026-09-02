@@ -268,7 +268,20 @@ function renderDataCardsPreview() {
   if (!container) return;
   container.innerHTML = "";
 
-  seoulReservationData.forEach(item => {
+  // Select diverse facilities across different districts
+  const seenPlaces = new Set();
+  const diverseCards = [];
+
+  for (const item of seoulReservationData) {
+    const mainPlace = item.PLACENM ? item.PLACENM.split('>')[0].trim() : '기타';
+    if (!seenPlaces.has(mainPlace)) {
+      seenPlaces.add(mainPlace);
+      diverseCards.push(item);
+      if (diverseCards.length >= 8) break;
+    }
+  }
+
+  diverseCards.forEach(item => {
     const card = document.createElement("div");
     card.className = "edu-card";
     card.onclick = () => {
@@ -281,7 +294,7 @@ function renderDataCardsPreview() {
     card.innerHTML = `
       <div class="edu-card-header">
         <span class="edu-badge ${statusClass}">${item.SVCSTATNM}</span>
-        <span class="edu-area">${item.AREANM}</span>
+        <span class="edu-area">${item.AREANM || '서울시'}</span>
       </div>
       <div class="edu-card-title">${item.SVCNM}</div>
       <div class="edu-card-info">
