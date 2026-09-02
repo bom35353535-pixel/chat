@@ -9,8 +9,10 @@ let OPENROUTER_API_KEY = atob("c2stb3ItdjEtNjM5YzBlZGQzNmFhNGEzODZkZGMwNjJkMTk0M
 let seoulReservationData = [];
 let isDataLoaded = false;
 
-// Default Fallback Data (API 연동 실패 또는 CORS 대응용 샘플 데이터셋)
-const DEFAULT_SEOUL_DATA = [
+// Default Fallback Data (seoul_data.js가 포함되면 355건 전체 데이터 자동 사용)
+const DEFAULT_SEOUL_DATA = (typeof window !== 'undefined' && window.SEOUL_FULL_DATA && window.SEOUL_FULL_DATA.length > 0)
+  ? window.SEOUL_FULL_DATA
+  : [
   {
     "GUBUN": "자체",
     "SVCID": "S260210133959300415",
@@ -33,98 +35,6 @@ const DEFAULT_SEOUL_DATA = [
     "TELNO": "02-724-0236,191",
     "V_MAX": "16:00",
     "V_MIN": "14:00"
-  },
-  {
-    "GUBUN": "자체",
-    "SVCID": "S260519103905622756",
-    "MAXCLASSNM": "교육강좌",
-    "MINCLASSNM": "역사",
-    "SVCSTATNM": "접수종료",
-    "SVCNM": "내 인생의 18번, 시대의 명곡이 되다 수강생 모집",
-    "PAYATNM": "무료",
-    "PLACENM": "서울역사박물관",
-    "USETGTINFO": "성인(55세 이상 성인)",
-    "SVCURL": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S260519103905622756",
-    "X": "126.97037430869801",
-    "Y": "37.570500279648634",
-    "SVCOPNBGNDT": "2026-08-13 00:00:00.0",
-    "SVCOPNENDDT": "2026-09-16 00:00:00.0",
-    "RCPTBGNDT": "2026-08-19 10:00:00.0",
-    "RCPTENDDT": "2026-08-30 17:00:00.0",
-    "AREANM": "종로구",
-    "IMGURL": "https://yeyak.seoul.go.kr/web/common/file/FileDown.do?file_id=1786517013823MO74QBZ2FS0F4ET0B5H1HCV4L",
-    "TELNO": "02-724-0199 / 0196",
-    "V_MAX": "00:00",
-    "V_MIN": "00:00"
-  },
-  {
-    "GUBUN": "자체",
-    "SVCID": "S260622155501556026",
-    "MAXCLASSNM": "교육강좌",
-    "MINCLASSNM": "역사",
-    "SVCSTATNM": "접수종료",
-    "SVCNM": "제49기 <중학생 인턴제> 수강생 모집",
-    "PAYATNM": "무료",
-    "PLACENM": "서울역사박물관",
-    "USETGTINFO": "청소년(중학생 1-3학년)",
-    "SVCURL": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S260622155501556026",
-    "X": "126.97037430869801",
-    "Y": "37.570500279648634",
-    "SVCOPNBGNDT": "2026-06-26 00:00:00.0",
-    "SVCOPNENDDT": "2026-09-19 00:00:00.0",
-    "RCPTBGNDT": "2026-06-29 10:00:00.0",
-    "RCPTENDDT": "2026-07-31 17:00:00.0",
-    "AREANM": "종로구",
-    "IMGURL": "https://yeyak.seoul.go.kr/web/common/file/FileDown.do?file_id=1782111596207O4FKC5SW2BI5YIZA8CBH5IXBG",
-    "TELNO": "02-724-0236, 0193",
-    "V_MAX": "12:00",
-    "V_MIN": "10:00"
-  },
-  {
-    "GUBUN": "자체",
-    "SVCID": "S260804164236879206",
-    "MAXCLASSNM": "교육강좌",
-    "MINCLASSNM": "역사",
-    "SVCSTATNM": "접수종료",
-    "SVCNM": "2026 서울역사박물관대학 (심화반)",
-    "PAYATNM": "무료",
-    "PLACENM": "서울역사박물관",
-    "USETGTINFO": "성인",
-    "SVCURL": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S260804164236879206",
-    "X": "126.97037430869801",
-    "Y": "37.570500279648634",
-    "SVCOPNBGNDT": "2026-08-11 00:00:00.0",
-    "SVCOPNENDDT": "2026-10-16 00:00:00.0",
-    "RCPTBGNDT": "2026-08-14 10:00:00.0",
-    "RCPTENDDT": "2026-08-21 17:00:00.0",
-    "AREANM": "종로구",
-    "IMGURL": "https://yeyak.seoul.go.kr/web/common/file/FileDown.do?file_id=1786066941183D0P2NIMS4R8ARB5ZUD15NBY07",
-    "TELNO": "02-724-0199, 0280",
-    "V_MAX": "00:00",
-    "V_MIN": "00:00"
-  },
-  {
-    "GUBUN": "자체",
-    "SVCID": "S260806090535821750",
-    "MAXCLASSNM": "교육강좌",
-    "MINCLASSNM": "역사",
-    "SVCSTATNM": "예약마감",
-    "SVCNM": "2026년 하반기 '우리 가족 경희궁 탐험대' 교육생 모집",
-    "PAYATNM": "무료",
-    "PLACENM": "서울역사박물관",
-    "USETGTINFO": "가족(초등학교 1~6학년 자녀를 동반한 가족)",
-    "SVCURL": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S260806090535821750",
-    "X": "126.97037430869801",
-    "Y": "37.570500279648634",
-    "SVCOPNBGNDT": "2026-08-07 00:00:00.0",
-    "SVCOPNENDDT": "2026-11-21 00:00:00.0",
-    "RCPTBGNDT": "2026-08-24 10:00:00.0",
-    "RCPTENDDT": "2026-11-15 17:00:00.0",
-    "AREANM": "종로구",
-    "IMGURL": "https://yeyak.seoul.go.kr/web/common/file/FileDown.do?file_id=1785979677665TZFE1VJKAT1FTV0LLSCA5YDXO",
-    "TELNO": "02-724-9750, 0196",
-    "V_MAX": "12:00",
-    "V_MIN": "10:30"
   }
 ];
 
@@ -230,12 +140,25 @@ const SEOUL_API_ENDPOINTS = [
 
 /* Fetch Seoul Education Public Reservation API (355+ Real-time items) */
 async function fetchSeoulEducationData() {
+  // 1차: local seoul_data.js (355건 전체) 우선 적용
+  if (typeof window !== 'undefined' && window.SEOUL_FULL_DATA && window.SEOUL_FULL_DATA.length > 0) {
+    seoulReservationData = window.SEOUL_FULL_DATA;
+    isDataLoaded = true;
+    updateDataBadge(`서울시 공공데이터 355건 전체 탑재됨`);
+    renderDataCardsPreview();
+  } else {
+    seoulReservationData = DEFAULT_SEOUL_DATA;
+    isDataLoaded = true;
+    updateDataBadge(`서울시 공공데이터 탑재됨 (${seoulReservationData.length}건)`);
+    renderDataCardsPreview();
+  }
+
+  // 2차: 실시간 최신 API 갱신 시도 (선택적)
   for (const endpoint of SEOUL_API_ENDPOINTS) {
     try {
       const response = await fetch(endpoint);
       if (response.ok) {
         let textData = await response.text();
-        // Parse JSON if returned as string
         const data = typeof textData === 'string' ? JSON.parse(textData) : textData;
         if (data.ListPublicReservationEducation && data.ListPublicReservationEducation.row) {
           seoulReservationData = data.ListPublicReservationEducation.row;
@@ -249,12 +172,6 @@ async function fetchSeoulEducationData() {
       console.warn(`Failed fetching Seoul API from ${endpoint}:`, e);
     }
   }
-
-  // Fallback to built-in cache
-  seoulReservationData = DEFAULT_SEOUL_DATA;
-  isDataLoaded = true;
-  updateDataBadge(`서울시 공공데이터 탑재됨 (${seoulReservationData.length}건)`);
-  renderDataCardsPreview();
 }
 
 function updateDataBadge(text) {
@@ -268,16 +185,17 @@ function renderDataCardsPreview() {
   if (!container) return;
   container.innerHTML = "";
 
-  // Select diverse facilities across different districts
+  // Select diverse facilities across different districts (서울식물원, 과학관, 청년센터, 박물관 등 다양한 장소 우선)
   const seenPlaces = new Set();
   const diverseCards = [];
 
+  // 셔플/다양성 확보를 위한 장소 필터링
   for (const item of seoulReservationData) {
     const mainPlace = item.PLACENM ? item.PLACENM.split('>')[0].trim() : '기타';
     if (!seenPlaces.has(mainPlace)) {
       seenPlaces.add(mainPlace);
       diverseCards.push(item);
-      if (diverseCards.length >= 8) break;
+      if (diverseCards.length >= 10) break;
     }
   }
 
@@ -299,7 +217,7 @@ function renderDataCardsPreview() {
       <div class="edu-card-title">${item.SVCNM}</div>
       <div class="edu-card-info">
         <div><i class="fa-solid fa-location-dot"></i> ${item.PLACENM}</div>
-        <div><i class="fa-solid fa-users"></i> ${item.USETGTINFO.trim()}</div>
+        <div><i class="fa-solid fa-users"></i> ${(item.USETGTINFO || '').trim()}</div>
         <div><i class="fa-solid fa-tag"></i> ${item.PAYATNM}</div>
       </div>
     `;
@@ -543,30 +461,66 @@ async function sendMessage() {
 
   // Smart Keyword Filter for RAG Context Optimization
   const queryLower = text.toLowerCase();
+  
+  // Extract search tokens (words >= 2 chars, removing common fluff)
+  const stopWords = ['안내', '알려줘', '추천해줘', '찾아줘', '알려주세요', '추천', '무엇', '어디', '관한', '어떤', '있어', '있나요', '서울시', '서울'];
+  const tokens = queryLower
+    .replace(/[^\w\s가-힣]/g, ' ')
+    .split(/\s+/)
+    .filter(t => t.length >= 2 && !stopWords.includes(t));
+
   let relevantData = seoulReservationData.filter(item => {
-    return (item.AREANM && queryLower.includes(item.AREANM.toLowerCase())) ||
-           (item.SVCNM && queryLower.includes(item.SVCNM.toLowerCase())) ||
-           (item.MINCLASSNM && queryLower.includes(item.MINCLASSNM.toLowerCase())) ||
-           (item.USETGTINFO && queryLower.includes(item.USETGTINFO.toLowerCase())) ||
-           (item.PLACENM && queryLower.includes(item.PLACENM.toLowerCase()));
+    const area = (item.AREANM || '').toLowerCase();
+    const svc = (item.SVCNM || '').toLowerCase();
+    const place = (item.PLACENM || '').toLowerCase();
+    const target = (item.USETGTINFO || '').toLowerCase();
+    const minClass = (item.MINCLASSNM || '').toLowerCase();
+    const pay = (item.PAYATNM || '').toLowerCase();
+
+    // Direct phrase match
+    if (area && queryLower.includes(area)) return true;
+    if (place && queryLower.includes(place)) return true;
+    if (svc && queryLower.includes(svc)) return true;
+
+    // Token matches
+    if (tokens.length > 0) {
+      return tokens.some(t => 
+        area.includes(t) || svc.includes(t) || place.includes(t) || target.includes(t) || minClass.includes(t) || pay.includes(t)
+      );
+    }
+    return false;
   });
+
+  // Fallback: 일반 질문이거나 결과가 없는 경우 35개 대표 다양 장소 샘플링 제공
+  if (relevantData.length === 0) {
+    const seen = new Set();
+    relevantData = seoulReservationData.filter(item => {
+      const mainPlace = item.PLACENM ? item.PLACENM.split('>')[0].trim() : '기타';
+      if (!seen.has(mainPlace)) {
+        seen.add(mainPlace);
+        return true;
+      }
+      return false;
+    }).slice(0, 35);
+  } else if (relevantData.length > 35) {
+    relevantData = relevantData.slice(0, 35);
+  }
 
   let RAG_SYSTEM_PROMPT = "";
 
   if (relevantData.length > 0) {
-    if (relevantData.length > 35) relevantData = relevantData.slice(0, 35);
     const contextString = JSON.stringify(relevantData, null, 2);
     RAG_SYSTEM_PROMPT = `${state.settings.systemPrompt}
 
-[실시간 서울시 교육 공공서비스예약 API 검색 결과 (관련 ${relevantData.length}건)]
+[실시간 서울시 교육 공공서비스예약 API 검색 결과 (관련 ${relevantData.length}건 탑재)]
 ${contextString}`;
   } else {
     // If no direct match in local API data, instruct AI to use web_search tool to find live info!
     RAG_SYSTEM_PROMPT = `${state.settings.systemPrompt}
 
-[중요 지침: 현재 355건 기본 API 목록에 사용자 질문 키워드가 직접 포함되지 않았습니다.]
+[중요 지침: 서울시 공공데이터 목록 검색 중입니다.]
 질문하신 내용에 대해 절대로 "정보가 없습니다"나 "죄송합니다"라고 단정 지어 거절하지 마세요!
-반드시 탑재된 웹 검색 도구(openrouter:web_search)를 사용하여 서울시 공공서비스예약(yeyak.seoul.go.kr) 및 관련 도서관/기관 웹사이트에서 최신 예약 프로그램 정보를 검색하여 안내하세요.`;
+필요시 탑재된 웹 검색 도구(openrouter:web_search)를 사용하여 서울시 공공서비스예약(yeyak.seoul.go.kr) 및 관련 도서관/기관 웹사이트에서 최신 예약 프로그램 정보를 검색하여 친절히 안내하세요.`;
   }
 
   const messagesPayload = [
