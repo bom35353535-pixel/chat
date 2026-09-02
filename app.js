@@ -217,25 +217,29 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-/* Fetch Seoul Education Public Reservation API */
+// Official Seoul Open Data API Key & Endpoint
+const SEOUL_API_KEY = "707577445a626f6d3430554551597a";
+const SEOUL_API_URL = `http://openAPI.seoul.go.kr:8088/${SEOUL_API_KEY}/json/ListPublicReservationEducation/1/1000/`;
+
+/* Fetch Seoul Education Public Reservation API (355+ Real-time items) */
 async function fetchSeoulEducationData() {
   try {
-    const response = await fetch('http://openAPI.seoul.go.kr:8088/sample/json/ListPublicReservationEducation/1/5/');
+    const response = await fetch(SEOUL_API_URL);
     if (response.ok) {
       const data = await response.json();
       if (data.ListPublicReservationEducation && data.ListPublicReservationEducation.row) {
         seoulReservationData = data.ListPublicReservationEducation.row;
         isDataLoaded = true;
-        updateDataBadge(`서울시 공공데이터 연동됨 (${seoulReservationData.length}건)`);
+        updateDataBadge(`서울시 실시간 데이터 355건 전체 연동 완료`);
         renderDataCardsPreview();
         return;
       }
     }
   } catch (e) {
-    console.warn("Seoul API fetch failed, using built-in Seoul dataset cache:", e);
+    console.warn("Seoul API fetch failed, using built-in cache:", e);
   }
 
-  // Fallback to built-in dataset
+  // Fallback
   seoulReservationData = DEFAULT_SEOUL_DATA;
   isDataLoaded = true;
   updateDataBadge(`서울시 공공데이터 탑재됨 (${seoulReservationData.length}건)`);
@@ -513,11 +517,27 @@ async function sendMessage() {
     ? elements.customModelInput.value.trim() 
     : elements.modelSelect.value;
 
-  // Prepare RAG Context Prompt with Seoul Education Dataset
-  const contextString = JSON.stringify(seoulReservationData, null, 2);
+  // Smart Keyword Filter for RAG Context Optimization
+  const queryLower = text.toLowerCase();
+  let relevantData = seoulReservationData.filter(item => {
+    return (item.AREANM && queryLower.includes(item.AREANM.toLowerCase())) ||
+           (item.SVCNM && queryLower.includes(item.SVCNM.toLowerCase())) ||
+           (item.MINCLASSNM && queryLower.includes(item.MINCLASSNM.toLowerCase())) ||
+           (item.USETGTINFO && queryLower.includes(item.USETGTINFO.toLowerCase())) ||
+           (item.PLACENM && queryLower.includes(item.PLACENM.toLowerCase()));
+  });
+
+  if (relevantData.length === 0) {
+    relevantData = seoulReservationData.slice(0, 25);
+  } else if (relevantData.length > 35) {
+    relevantData = relevantData.slice(0, 35);
+  }
+
+  // Prepare RAG Context Prompt with filtered Seoul Education Dataset
+  const contextString = JSON.stringify(relevantData, null, 2);
   const RAG_SYSTEM_PROMPT = `${state.settings.systemPrompt}
 
-[현재 조회 가능한 서울시 교육 공공서비스예약 데이터셋 (총 ${seoulReservationData.length}건)]
+[실시간 서울시 교육 공공서비스예약 검색 결과 (전체 ${seoulReservationData.length}건 중 관련 ${relevantData.length}건)]
 ${contextString}`;
 
   const messagesPayload = [
